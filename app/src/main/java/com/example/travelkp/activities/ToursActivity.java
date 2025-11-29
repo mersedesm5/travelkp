@@ -1,6 +1,5 @@
 package com.example.travelkp.activities;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -24,29 +23,33 @@ public class ToursActivity extends AppCompatActivity {
     private TourAdapter adapter;
     private ProgressBar progressBar;
 
-    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tours);
 
-        // Инициализация views
+        // Initialize views
         recyclerView = findViewById(R.id.toursRecyclerView);
+        progressBar = findViewById(R.id.progressBar);
 
-        // Настройка RecyclerView
+        // Setup RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
 
-        // Создание адаптера
+        // Create adapter
         adapter = new TourAdapter();
         recyclerView.setAdapter(adapter);
 
-        // Загрузка данных
+        // Load data
         loadTours();
     }
 
     private void loadTours() {
         Log.d(TAG, "Starting to load tours...");
+
+        // Show progress bar
+        progressBar.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.GONE);
 
         RetrofitClient.getInstance()
                 .getApiService()
@@ -54,6 +57,10 @@ public class ToursActivity extends AppCompatActivity {
                 .enqueue(new Callback<List<Tour>>() {
                     @Override
                     public void onResponse(Call<List<Tour>> call, Response<List<Tour>> response) {
+                        // Hide progress bar
+                        progressBar.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.VISIBLE);
+
                         if (response.isSuccessful() && response.body() != null) {
                             List<Tour> tours = response.body();
                             adapter.setTours(tours);
@@ -74,6 +81,10 @@ public class ToursActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(Call<List<Tour>> call, Throwable t) {
+                        // Hide progress bar
+                        progressBar.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.VISIBLE);
+
                         Log.e(TAG, "Error loading tours", t);
                         Toast.makeText(ToursActivity.this,
                                 "Ошибка сети: " + t.getMessage(),
@@ -85,6 +96,4 @@ public class ToursActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Очистка ресурсов если необходимо
-    }
-}
+    }}
