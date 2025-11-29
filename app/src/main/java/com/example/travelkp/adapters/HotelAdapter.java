@@ -1,4 +1,4 @@
-package com.example.travelkp.adapters;
+package com.example.travelkp.adapters;  // NOT adapers!
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,8 +36,10 @@ public class HotelAdapter extends RecyclerView.Adapter<HotelAdapter.HotelViewHol
     }
 
     public void setHotels(List<Hotel> hotels) {
-        this.hotels = hotels;
-        notifyDataSetChanged();
+        if (hotels != null) {
+            this.hotels = hotels;
+            notifyDataSetChanged();
+        }
     }
 
     static class HotelViewHolder extends RecyclerView.ViewHolder {
@@ -59,16 +61,26 @@ public class HotelAdapter extends RecyclerView.Adapter<HotelAdapter.HotelViewHol
         }
 
         public void bind(Hotel hotel) {
-            nameTextView.setText(hotel.getName());
-            addressTextView.setText(hotel.getAddress());
-            priceTextView.setText(hotel.getPricePerNight() + " " + hotel.getCurrency());
-            ratingTextView.setText("★ " + hotel.getRating());
+            if (hotel == null) return;
+
+            nameTextView.setText(hotel.getName() != null ? hotel.getName() : "");
+            addressTextView.setText(hotel.getAddress() != null ? hotel.getAddress() : "");
+
+            String currency = hotel.getCurrency() != null ? hotel.getCurrency() : "KGS";
+            priceTextView.setText(String.format("%.0f %s", hotel.getPricePerNight(), currency));
+
+            ratingTextView.setText(String.format("★ %.1f", hotel.getRating()));
             starsTextView.setText(hotel.getStars() + " звезд");
 
-            Picasso.get()
-                    .load(hotel.getImage())
-                    .placeholder(R.drawable.ic_launcher_background)
-                    .into(imageView);
+            if (hotel.getImage() != null && !hotel.getImage().isEmpty()) {
+                Picasso.get()
+                        .load(hotel.getImage())
+                        .placeholder(R.drawable.ic_launcher_background)
+                        .error(R.drawable.ic_launcher_background)
+                        .into(imageView);
+            } else {
+                imageView.setImageResource(R.drawable.ic_launcher_background);
+            }
         }
     }
 }

@@ -8,9 +8,9 @@ import retrofit2.http.GET;
 
 public interface ApiService {
 
-    @GET("hotels")
+    @GET("/api/hotels")
     Call<List<Hotel>> getHotels();
 
-    @GET("tours")
+    @GET("/api/tours")
     Call<List<Tour>> getTours();
 }

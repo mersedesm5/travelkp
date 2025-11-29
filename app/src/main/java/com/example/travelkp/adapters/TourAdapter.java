@@ -1,4 +1,4 @@
-package com.example.travelkp.adapters;
+package com.example.travelkp.adapters;  // NOT adapers!
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,8 +36,10 @@ public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder
     }
 
     public void setTours(List<Tour> tours) {
-        this.tours = tours;
-        notifyDataSetChanged();
+        if (tours != null) {
+            this.tours = tours;
+            notifyDataSetChanged();
+        }
     }
 
     static class TourViewHolder extends RecyclerView.ViewHolder {
@@ -59,16 +61,26 @@ public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder
         }
 
         public void bind(Tour tour) {
-            titleTextView.setText(tour.getTitle());
-            durationTextView.setText(tour.getDurationDays() + " дней");
-            priceTextView.setText(tour.getPrice() + " " + tour.getCurrency());
-            ratingTextView.setText("★ " + tour.getRating());
-            difficultyTextView.setText(tour.getDifficulty());
+            if (tour == null) return;
 
-            Picasso.get()
-                    .load(tour.getImage())
-                    .placeholder(R.drawable.ic_launcher_background)
-                    .into(imageView);
+            titleTextView.setText(tour.getTitle() != null ? tour.getTitle() : "");
+            durationTextView.setText(tour.getDurationDays() + " дней");
+
+            String currency = tour.getCurrency() != null ? tour.getCurrency() : "KGS";
+            priceTextView.setText(String.format("%.0f %s", tour.getPrice(), currency));
+
+            ratingTextView.setText(String.format("★ %.1f", tour.getRating()));
+            difficultyTextView.setText(tour.getDifficulty() != null ? tour.getDifficulty() : "");
+
+            if (tour.getImage() != null && !tour.getImage().isEmpty()) {
+                Picasso.get()
+                        .load(tour.getImage())
+                        .placeholder(R.drawable.ic_launcher_background)
+                        .error(R.drawable.ic_launcher_background)
+                        .into(imageView);
+            } else {
+                imageView.setImageResource(R.drawable.ic_launcher_background);
+            }
         }
     }
 }

@@ -14,6 +14,10 @@ public class Tour {
     private String image;
     private List<Integer> cities;
 
+    // Default constructor (required for Gson/Retrofit)
+    public Tour() {
+    }
+
     public Tour(int id, String title, int durationDays, double price,
                 String currency, double rating, String difficulty,
                 List<String> includes, String image, List<Integer> cities) {
